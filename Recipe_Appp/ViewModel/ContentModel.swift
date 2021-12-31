@@ -12,48 +12,134 @@ class ContentModel: Identifiable, ObservableObject {
   @Published var recipe = [Module]()
     
     init(){
-        ContentModel.getLocaldata()
+        self.recipe = DataService.getLocaldata()
     }
     
-  static func getLocaldata ()-> [Module] {
+    
+func getPerTion (ingredient: Ingredient, recipeServing: Int ,targerServing: Int) -> String {
+    
+        var portion = ""
+        var numerator = ingredient.num ?? 1
+        var denominator = ingredient.denom ?? 1
+        var wholeportion = 0
         
-        let urlString = Bundle.main.path(forResource: "recipes", ofType: "json")
-        
-      guard urlString != nil else {
-          return [Module]()
-      }
-      
-        let url = URL(fileURLWithPath: urlString!)
-        
-        do{
+        if ingredient.num != nil {
             
-            let data = try Data(contentsOf: url)
+            denominator *= recipeServing
+            numerator *= targerServing
             
-            let decoder = JSONDecoder()
+            let divisor = Rational.greatestCommonDivisor(numerator, denominator)
             
-            do{
+            numerator /= divisor
+            denominator /= divisor
+            
+            
+            if numerator >= 0 {
                 
-                let recipeData = try decoder.decode([Module].self, from: data)
-                
-                for r in recipeData {
-                    r.id = UUID()
-                    
-                    for i in r.ingredients {
-                        i.id = UUID()
-                    }
-                }
-                return recipeData
+                wholeportion = Int(numerator / denominator)
+                numerator = numerator % denominator
+                portion += String(wholeportion)
                 
             }
-            catch{
-                print("no dind")
+            
+            if numerator >  0 {
+                
+                portion += wholeportion > 0 ? " " : ""
+                portion += "\(numerator)/\(denominator)"
+                
             }
         }
-        catch{
-            print("error")
+        
+    if var unit = ingredient.unit {
+        
+        if wholeportion > 1 {
+            
+            if unit.suffix(2) == "ch" {
+                unit += "es"
+            }
+            else if unit.suffix(1) == "f" {
+                unit = String(unit.dropLast())
+                unit += "ves"
+            }
+            else {
+                unit += "s"
+            }
+            
         }
-   
-      return [Module]()
-  }
-   
+        
+            
+        portion += ingredient.num == nil && ingredient.denom == nil ? "" : " "
+        
+        return portion + unit
+        
+        }
+        
+        return portion
+    }
 }
+    
+    
+    
+    
+    
+    
+    
+    
+// //   static func getPortion (ingredient: Ingredient, recipeServings: Int, targetServing: Int) -> String {
+//
+//        var potion = ""
+//        var numerator = ingredient.num ?? 1
+//        var denominator = ingredient.denom ?? 1
+//        var wholeportion = 0
+//
+//
+//        if ingredient.num != nil {
+//            denominator *= recipeServings
+//            numerator *= targetServing
+//
+//            let divisor = Rational.greatestCommonDivisor(numerator, denominator)
+//
+//            numerator /= divisor
+//            denominator /= divisor
+//
+//            if numerator >= denominator {
+//                wholeportion = numerator / denominator
+//                numerator = numerator % denominator
+//                potion += String(wholeportion)
+//            }
+//
+//            if numerator > 0 {
+//                potion += wholeportion > 0 ? " " : ""
+//                potion += "\(numerator)/\(denominator)"
+//            }
+//        }
+//        if  var unit = ingredient.unit  {
+//
+//          if wholeportion > 1 {
+//
+//              if unit.suffix(2) == "ch" {
+//                  unit += "es"
+//              }
+//              else if unit.suffix(1) == "f" {
+//                  unit = String(unit.dropLast())
+//                  unit += "ves"
+//              }
+//              else {
+//                  unit += "s"
+//              }
+//
+//          }
+//
+//
+//          portion += ingredient.num == nil && ingredient.denom == nil ? "" : " "
+//
+//          return portion + unit
+//
+//          }
+//
+//        return potion
+//
+//    }
+   
+    
+

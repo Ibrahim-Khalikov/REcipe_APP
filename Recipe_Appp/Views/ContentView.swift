@@ -43,12 +43,20 @@ struct ContentView: View {
                                 .frame(width: 65, height: 65)
                                 .cornerRadius(10)
                                 .clipShape(Circle())
-                                
+                            VStack(alignment: .leading, spacing: 3){
                             Text(models.name)
+                                    .bold()
                                 .padding(.leading,1)
                                 .font(Font.custom("Avenir", size: 20))
                                 .padding(.leading,10)
+                        
+                                RecipeHighlights(highlight: models.highlights)
+                                    .padding(.leading)
+                                    .font(.callout)
+                                    .foregroundColor(.gray)
+                            }
                         }
+                            
                     })
                     
                     

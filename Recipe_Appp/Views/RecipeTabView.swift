@@ -16,7 +16,7 @@ struct RecipeTabView: View {
     var body: some View {
         
         TabView {
-           ContentView()
+         FeaturedView()
             
                 .tabItem {
                     VStack{
@@ -25,7 +25,7 @@ struct RecipeTabView: View {
                     }
                 }
                     
-          Text("dsfsdf")
+          ContentView()
                     
                         .tabItem {
                             VStack{
